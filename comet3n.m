@@ -1,10 +1,14 @@
-function [ output_args ] = comet3n( src, varargin )
+function comet3n( src, varargin )
 % COMET3N plots trajectories of multiple objects in 3D 
 %   comet3n(src) plots tracjectors of objects specified by MxN  matrix src.
+%   src has to be at least M * 5 in size.
 %   The first 3 columns of src must be the x, y, and z coordinates of the
 %   object at a timepoint. The 4th column is timepoint where spatial
 %   coordinates are registered. The 5th column is the ID number of the
 %   object. 
+%
+%   Optinally, color can be supplied in the form rgb indexes. src in this
+%   case would be an M * 8 matrix.
 %
 %   comet3n(src) plots cells and trajectories using the color
 %   specified by the 6th to 8th column (R,G and B) of the input file, src. 
@@ -16,15 +20,17 @@ function [ output_args ] = comet3n( src, varargin )
 %   comet3n(src,'taillength',num) allows user to specify taillength.
 %   Defauly is 20.
 %
-%   comet3n(src,'scale',num) allows user to change scale of the comet head.
+%   comet3n(src,'headsize',num) allows user to change the size of head.
 %   The scale is relative to default size, which is 1/100 of the x axis
 %   range.
+%    
+%   comet3n(src, 'tailwidth', num) allows user to change tail width.
 % 
 %   comet3n(src,'alpha',num) allows user to change alpha value of the comet
 %   head. Default is 1. 
 %
-%   Version 1.2.0
-%   Copyright Chaoyuan Yeh, 2015
+%   Version 1.3
+%   Copyright Chaoyuan Yeh, 2016
 %     
 ObjList_T = cell(max(src(:,4)),1);
 for tt = 1:max(src(:,4))
@@ -56,6 +62,12 @@ else
     tailLength = 20;
 end
 
+if any(strcmpi(varargin,'tailwidth'))
+    tailwidth = varargin{find(strcmpi(varargin,'tailwidth'))+1};
+else
+    tailwidth = 1;
+end
+
 if any(strcmpi(varargin,'speed'))
     if varargin{find(strcmpi(varargin,'speed'))+1} < 1 ... 
         || varargin{find(strcmpi(varargin,'speed'))+1} > 10
@@ -75,8 +87,8 @@ yratio = (ymax-ymin)/(xmax-xmin);
 zratio = (zmax-zmin)/(xmax-xmin);
 scale =(xmax-xmin)/100;
 
-if any(strcmpi(varargin,'scale'))
-    scale = scale * varargin{find(strcmpi(varargin,'scale'))+1};
+if any(strcmpi(varargin,'headsize'))
+    scale = scale * varargin{find(strcmpi(varargin,'headsize'))+1};
 end
 
 if any(strcmpi(varargin,'alpha'))
@@ -111,12 +123,14 @@ for tt = 1:max(src(:,4))
             plot3(PosList_ID{ObjList(ii)}(1:ind_t,1),...
                 PosList_ID{ObjList(ii)}(1:ind_t,2),...
                 PosList_ID{ObjList(ii)}(1:ind_t,3),...
-                'color',PosList_ID{ObjList(ii)}(ind_t,5:7));
+                'color',PosList_ID{ObjList(ii)}(ind_t,5:7),...
+                'LineWidth', tailwidth);
         else
             plot3(PosList_ID{ObjList(ii)}(ind_t-tailLength:ind_t,1),...
                 PosList_ID{ObjList(ii)}(ind_t-tailLength:ind_t,2),...
                 PosList_ID{ObjList(ii)}(ind_t-tailLength:ind_t,3),...
-                'color',PosList_ID{ObjList(ii)}(ind_t,5:7));
+                'color',PosList_ID{ObjList(ii)}(ind_t,5:7),...
+                'LineWidth', tailwidth);
         end
     end
     view([az el])
