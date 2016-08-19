@@ -1,27 +1,25 @@
 # comet3n
 COMET3N plots trajectories of multiple objects in 3D 
-comet3n(src) plots tracjectors of objects specified by MxN  matrix src.
-The first 3 columns of src must be the x, y, and z coordinates of the
-object at a timepoint. The 4th column is timepoint where spatial
-coordinates are registered. The 5th column is the ID number of the
-object. 
 
-comet3n(src) plots cells and trajectories using the color
-specified by the 6th to 8th column (R,G and B) of the input file, src. 
+comet3n plots trajectories of multiple objects in 3D with controllable speed and tail length. It takes an M*5 array as an input. Column 1-4 are the (x,y,z,t) coordinate of an object, respectively. Column 5 is object id number. Time and object id number must both be integers. See example below: 
 
-comet3n(src,'speed',num) allows different plotting speed, ranging from
-1 to 10. When speed argument is not given, this function will plot at
-maximum speed.
+% Object 1 
+t = 1 : 500; 
+x = sin( t *pi/50); 
+y = cos(t * pi/30); 
+z = 0.5 * t; 
+id = ones(length(t), 1);
 
-comet3n(src,'taillength',num) allows user to specify taillength.
-Defauly is 20.
+obj1 = cat(2, x', y', z', t', id);
 
-comet3n(src,'scale',num) allows user to change scale of the comet head.
-The scale is relative to default size, which is 1/100 of the x axis
-range.
+% Object 2 
+t = 1 : 350; 
+x = 2*sin(t * pi/30); 
+y = -cos( t * pi/60); 
+z = 2 * t; 
+id = ones(length(t), 1)*2;
 
-comet3n(src,'alpha',num) allows user to change alpha value of the comet
-head. Default is 1. 
+obj2 = cat(2, x', y', z',t', id);
 
-Version 1.2.0
-Copyright Chaoyuan Yeh, 2015
+src = cat(1, obj1, obj2); 
+comet3n(src);
